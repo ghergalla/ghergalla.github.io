@@ -18,3 +18,7 @@ table {
 td {
   text-align: center;
 }
+.bibtex {
+}
+.bibtex:hover + .bibtexcontents {
+}

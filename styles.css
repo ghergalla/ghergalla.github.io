@@ -1,14 +1,13 @@
 body {
-  background-color: powderblue;
+  background-color: #EFEFEA;
 }
 h1 {
-  color: blue;
 }
 p {
-  color: red;
 }
 table, td, th {
   border: 1px solid black;
+  border-radius: 5px;
 }
 
 table {

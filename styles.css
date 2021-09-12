@@ -26,8 +26,8 @@ td {
 }
 
 .bibtex_entry, .bibtex_entry {
-display: none;
-    calc(100vw - 35px);
+    display: none;
+    width: calc(100vw - 35px);
     background: #fff;
     border-radius: 6px;
     padding: 15px 15px;
@@ -41,11 +41,9 @@ display: none;
     color: #fff;
 }
 .bibtex_entry:hover {
-  display: block;
-  width: calc(100vw - 35px);
-    
+    display: block;
+    width: calc(100vw - 35px);
     border-radius: 6px;
-    
     padding: 15px 15px;
     left: 10px;
     border: 16px #444;

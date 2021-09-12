@@ -18,7 +18,45 @@ table {
 td {
   text-align: center;
 }
+
 .bibtex {
+    display: inline-block;
+    text-indent: 0em;
+    border-bottom: 1px dotted black;
 }
-.bibtex:hover + .bibtexcontents {
+
+.bibtex_entry, .bibtex_entry {
+display: none;
+    width: calc(100vw - 35px);
+    background: #fff;
+    border-radius: 6px;
+    padding: 15px 15px;
+    left: 10px;
+    border: 16px #444;
+    line-height: normal;
+    text-decoration: none;
+    position: absolute;
+    z-index: 1;
+    background-color: #444;
+    color: #fff;
 }
+.bibtex_entry:hover {
+  display: block;
+  width: calc(100vw - 35px);
+    
+    border-radius: 6px;
+    
+    padding: 15px 15px;
+    left: 10px;
+    border: 16px #444;
+    line-height: normal;
+    text-decoration: none;
+    position: absolute;
+     background-color: #444;
+     color: #fff;
+}
+
+.bibtex:hover + span {
+    display: block;
+}
+

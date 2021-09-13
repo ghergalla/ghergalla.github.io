@@ -1,10 +1,13 @@
 body {
   background-color: #EFEFEA;
 }
+
 h1 {
 }
+
 p {
 }
+
 table, td, th {
   border: 1px solid black;
   border-radius: 5px;
@@ -40,6 +43,7 @@ td {
     background-color: #444;
     color: #fff;
 }
+
 .bibtex_entry:hover {
     display: block;
     width: calc(100vw - 35px);
@@ -50,8 +54,8 @@ td {
     line-height: normal;
     text-decoration: none;
     position: absolute;
-     background-color: #444;
-     color: #fff;
+    background-color: #444;
+    color: #fff;
 }
 
 .bibtex:hover + span {

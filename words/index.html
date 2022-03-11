@@ -1,8 +1,36 @@
 <!DOCTYPE html>
+<meta charset="utf-8"/>
+<title>Word Lister</title>
 <html>
     <head>
+        <title>Word Lister Page</title>
+	<link rel="stylesheet" href="word_lister.css"/>
+	<link rel="icon" type="image/png" href="images/ico.png"/>
+	<meta name="author" content="Andrew C. Gallagher" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+	<script src="word_lister.js"></script>
     </head>
     <body>
 	    Hello everyone.
+      <div id="wordinput">
+	      <label for="guess">Word Guess:</label>
+	      <input type="text" id="guess" required minlength="5"
+               maxlength="5" size="12"
+	       title="enter guess"
+	       value="enter guess"
+	       style="text-transform:uppercase"
+	       onkeydown="return /[A-Z]/i.test(event.key)"
+	       onblur="if (this.value =='') {this.value = 'Enter Guess';}"
+	       onfocus="if (this.value == 'Enter Guess') {this.value = '';}"/>
+       </div>
+    <div id="hint"></div>
+    <div class="grid-parent">
+      <div class="game-stuff">
+      </div>
+      <div class="info-div">
+	      Info goes here.
+      </div>
+
+    </div>
     </body>
 </html>

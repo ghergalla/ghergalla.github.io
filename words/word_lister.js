@@ -125,7 +125,7 @@ $(document).ready(function() {
   OpenUpRowForClicking();
 
   // Read the Word list 
-  var solution_word_tree_url = 'solution_words.json';
+  var solution_word_url = 'solution_words.json';
 
   $.getJSON(solution_word_url).done(function(data) {
     solution_words = data.solution_words;

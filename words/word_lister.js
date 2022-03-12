@@ -140,6 +140,13 @@ $(document).ready(function() {
     console.log('Allowed word 0: ' + allowed_words[0]);
   });
 
+  // Monitor the word as it's being entered
+  const guess_input = document.querySelector('guess');
+  guess_input.addEventListener('input', updateValue);
+  function updateValue(e) {
+    console.log('Current guess:'+e.target_value);
+  }
+
   // This function changes the state of the box when clicked.
   $('.grid_item').click(function() {
     console.log('clicked box of ' + this.className);

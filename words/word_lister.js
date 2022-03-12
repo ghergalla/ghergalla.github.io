@@ -124,7 +124,16 @@ $(document).ready(function() {
   $(document).keydown(onKeyDown);
   OpenUpRowForClicking();
 
-    // This function changes the state of the box when clicked.
+  // Read the Word list 
+  var solution_word_tree_url = 'solution_words.json';
+
+  $.getJSON(solution_word_url).done(function(data) {
+    solution_words = data.solution_words;
+    console.log('Solution words loaded! Words: ' + solution_words.length);
+    console.log('Solution word 0: ' + solution_words[0]);
+  });
+
+  // This function changes the state of the box when clicked.
   $('.grid_item').click(function() {
     console.log('clicked box of ' + this.className);
     if (this.classList.contains('grid_zero')) {

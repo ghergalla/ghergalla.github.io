@@ -56,6 +56,9 @@ function onKeyDown(event) {
     case 'p':
       showHint('p');
       break;
+    case 'Enter':
+      showHint('Enter');
+      break;
     case 'ArrowLeft':
       showHint('ArrowLeft');
       break;

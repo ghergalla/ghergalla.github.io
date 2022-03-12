@@ -135,7 +135,7 @@ $(document).ready(function() {
   // Read the Word list 
   var allowed_word_url = 'allowed_words.json';
   $.getJSON(allowed_word_url).done(function(data_allowed) {
-    allowed_words = data_allowed.solution_words;
+    allowed_words = data_allowed.allowed_words;
     console.log('Allowed words loaded! Words: ' + allowed_words.length);
     console.log('Allowed word 0: ' + allowed_words[0]);
   });

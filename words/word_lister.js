@@ -158,12 +158,12 @@ $(document).ready(function() {
     }
 
     // Get the next guess word
-    var word_to_guess = GetNextWordGuessFromTree();
-    if (word_to_guess == 0) {
-      stopAndShowMessage(
-          'The word is not in the vocabulary or there has been a typo!');
-      return;
-    }
+ //   var word_to_guess = GetNextWordGuessFromTree();
+ //   if (word_to_guess == 0) {
+ //     stopAndShowMessage(
+ //         'The word is not in the vocabulary or there has been a typo!');
+ //     return;
+ //   }
 
     // Update the active row index.
     current_guess = current_guess + 1;

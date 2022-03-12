@@ -126,11 +126,18 @@ $(document).ready(function() {
 
   // Read the Word list 
   var solution_word_url = 'solution_words.json';
-
-  $.getJSON(solution_word_url).done(function(data) {
-    solution_words = data.solution_words;
+  $.getJSON(solution_word_url).done(function(data_solutions) {
+    solution_words = data_solutions.solution_words;
     console.log('Solution words loaded! Words: ' + solution_words.length);
     console.log('Solution word 0: ' + solution_words[0]);
+  });
+
+  // Read the Word list 
+  var allowed_word_url = 'allowed_words.json';
+  $.getJSON(allowed_word_url).done(function(data_allowed) {
+    allowed_words = data_allowed.solution_words;
+    console.log('Allowed words loaded! Words: ' + allowed_words.length);
+    console.log('Allowed word 0: ' + allowed_words[0]);
   });
 
   // This function changes the state of the box when clicked.

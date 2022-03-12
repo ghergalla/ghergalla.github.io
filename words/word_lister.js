@@ -147,7 +147,7 @@ $(document).ready(function() {
 //    console.log('Current guess:'+e.target_value)
 //  }
   $('#guess').on('input', function() {
-    console.log('out: '+($(this).textWidth() + 'px'));
+    console.log('out: '+guess.value);
   }).trigger('input');
 
 

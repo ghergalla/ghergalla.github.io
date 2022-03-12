@@ -168,7 +168,7 @@ $(document).ready(function() {
     // Update the active row index.
     current_guess = current_guess + 1;
 
-    PushWordToRow(word_to_guess);
+ //   PushWordToRow(word_to_guess);
 
     // Open Up Row
     OpenUpRowForClicking();

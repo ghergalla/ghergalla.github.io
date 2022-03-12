@@ -142,10 +142,15 @@ $(document).ready(function() {
 
   // Monitor the word as it's being entered
   const guess_input = document.querySelector('guess');
-  guess_input.addEventListener('input', updateValue);
+  guess_input.addEventListener('guess_input', updateValue);
   function updateValue(e) {
-    console.log('Current guess:'+e.target_value);
+    console.log('Current guess:'+e.target_value)
   }
+ // $('#guess').on('input', function() {
+ //   console.log('out: '+($(this).textWidth() + 'px'));
+ // }).trigger('input');
+
+
 
   // This function changes the state of the box when clicked.
   $('.grid_item').click(function() {

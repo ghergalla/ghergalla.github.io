@@ -7,25 +7,28 @@
   padding: 30px;
 }
 #guess {
-  height: 64px;
+  height: 60px;
   font-size: 48px;
   text-align: left;
   font-weight: bold;
-  color: #E0E0E0;
+  color: #B0B0B0;
 }
+
 .info-div {
   height: 200px;
-  font-size: 48px;
+  font-size: 32px;
+  padding: 10px;
   text-align: left;
-  font-weight: bold;
+  font-weight: normal;
   color: #E0E0E0;
 }
 .grid-parent {
-    width: 800px;
+    width: 960px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-gap: 20px;
 }
+
 .grid-container {
   width: 400px;
   display: grid;
@@ -104,8 +107,8 @@
   background-color: rgba(255, 255, 255, 0.4);
 }
 .grid_item {
-  width: 45px; /* 20 px */
-  height: 45px; /* 20 px */
+  width: 52px; /* 20 px */
+  height: 52px; /* 20 px */
   background-color: rgba(255, 255, 255, 0.15);
   border: 2px solid rgba(0, 0, 0, 0.8);
   padding: 15px;
@@ -117,8 +120,8 @@
 }
 
 .grid_zero {
-  width: 45px; /* 20 px */
-  height: 45px; /* 20 px */
+  width: 52px; /* 20 px */
+  height: 52px; /* 20 px */
   background-color: rgba(255, 255, 255, 0.3);
   border: 2px solid rgba(0, 0, 0, 0.8);
   padding: 15px;
@@ -129,8 +132,8 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 .zero_lock {
-  width: 45px; /* 20 px */
-  height: 45px; /* 20 px */
+  width: 52px; /* 20 px */
+  height: 52px; /* 20 px */
   background-color: rgba(255, 255, 255, 0.3);
   border: 2px solid rgba(0, 0, 0, 0.8);
   padding: 15px;
@@ -144,8 +147,8 @@
   background-color: rgba(255, 255, 255, 0.4);
 }
 .grid_one {
-  width: 45px; /* 20 px */
-  height: 45px; /* 20 px */
+  width: 52px; /* 20 px */
+  height: 52px; /* 20 px */
   background-color: rgba(50, 230, 50, 0.45);
   border: 2px solid rgba(0, 0, 0, 0.8);
   padding: 15px;
@@ -156,8 +159,8 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 .one_lock {
-  width: 45px; /* 20 px */
-  height: 45px; /* 20 px */
+  width: 52px; /* 20 px */
+  height: 52px; /* 20 px */
   background-color: rgba(50, 230, 50, 0.45);
   border: 2px solid rgba(0, 0, 0, 0.8);
   padding: 15px;
@@ -171,8 +174,8 @@
   background-color: rgba(50, 230, 50, 0.5);
 }
 .grid_two {
-  width: 45px; /* 20 px */
-  height: 45px; /* 20 px */
+  width: 52px; /* 20 px */
+  height: 52px; /* 20 px */
   background-color: rgba(255, 210, 20, 0.72);
   border: 2px solid rgba(0, 0, 0, 0.8);
   padding: 15px;
@@ -183,8 +186,8 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 .two_lock {
-  width: 45px; /* 20 px */
-  height: 45px; /* 20 px */
+  width: 52px; /* 20 px */
+  height: 52px; /* 20 px */
   background-color: rgba(255, 210, 20, 0.72);
   border: 2px solid rgba(0, 0, 0, 0.8);
   padding: 15px;

@@ -250,7 +250,7 @@ function ComputeRemainingSolutionWords() {
       var words_left = guess_response_map.get(current_row_state);
       var num_words_left = words_left.length;
       console.log("there are: " + num_words_left + ' words left');
-      $('#info-div-1').html("\nRemaining: " + num_words_left);
+      $('#info-div-1').html("\nRemaining solution words: " + num_words_left);
 
       //
       var some_words = '';
@@ -272,7 +272,7 @@ function ComputeRemainingSolutionWords() {
       }
     } else {
       console.log("No solution words fit the clues.");
-      $('#info-div-1').html("No remaining solution words.");
+      $('#info-div-1').html("No remaining solution words. Update the hint color on the letters if needed.");
       $('#info-div-3').html('');
     }
 }

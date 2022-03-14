@@ -107,12 +107,12 @@
   background-color: rgba(255, 255, 255, 0.4);
 }
 .grid_item {
-  width: 72px; /* 20 px */
-  height: 72px; /* 20 px */
+  width: 68px; /* 20 px */
+  height: 68px; /* 20 px */
   background-color: rgba(255, 255, 255, 0.15);
   border: 2px solid rgba(0, 0, 0, 0.8);
   padding: 15px;
-  font-size: 48px;
+  font-size: 56px;
   text-align: center;
   font-weight: bold;
   color: #E0E0E0;
@@ -120,24 +120,24 @@
 }
 
 .grid_zero {
-  width: 72px; /* 20 px */
-  height: 72px; /* 20 px */
+  width: 68px; /* 20 px */
+  height: 68px; /* 20 px */
   background-color: rgba(255, 255, 255, 0.3);
   border: 2px solid rgba(0, 0, 0, 0.8);
   padding: 15px;
-  font-size: 48px;
+  font-size: 56px;
   text-align: center;
   font-weight: bold;
   color: #E0E0E0;
   font-family: Arial, Helvetica, sans-serif;
 }
 .zero_lock {
-  width: 72px; /* 20 px */
-  height: 72px; /* 20 px */
+  width: 68px; /* 20 px */
+  height: 68px; /* 20 px */
   background-color: rgba(255, 255, 255, 0.3);
   border: 2px solid rgba(0, 0, 0, 0.8);
   padding: 15px;
-  font-size: 48px;
+  font-size: 56px;
   text-align: center;
   font-weight: bold;
   color: #E0E0E0;
@@ -147,24 +147,24 @@
   background-color: rgba(255, 255, 255, 0.4);
 }
 .grid_one {
-  width: 72px; /* 20 px */
-  height: 72px; /* 20 px */
+  width: 68px; /* 20 px */
+  height: 68px; /* 20 px */
   background-color: rgba(50, 230, 50, 0.45);
   border: 2px solid rgba(0, 0, 0, 0.8);
   padding: 15px;
-  font-size: 48px;
+  font-size: 56px;
   text-align: center;
   font-weight: bold;
   color: #E0E0E0;
   font-family: Arial, Helvetica, sans-serif;
 }
 .one_lock {
-  width: 72px; /* 20 px */
-  height: 72px; /* 20 px */
+  width: 68px; /* 20 px */
+  height: 68px; /* 20 px */
   background-color: rgba(50, 230, 50, 0.45);
   border: 2px solid rgba(0, 0, 0, 0.8);
   padding: 15px;
-  font-size: 48px;
+  font-size: 56px;
   text-align: center;
   font-weight: bold;
   color: #E0E0E0;
@@ -174,24 +174,24 @@
   background-color: rgba(50, 230, 50, 0.5);
 }
 .grid_two {
-  width: 72px; /* 20 px */
-  height: 72px; /* 20 px */
+  width: 68px; /* 20 px */
+  height: 68px; /* 20 px */
   background-color: rgba(255, 210, 20, 0.72);
   border: 2px solid rgba(0, 0, 0, 0.8);
   padding: 15px;
-  font-size: 48px;
+  font-size: 56px;
   text-align: center;
   font-weight: bold;
   color: #E0E0E0;
   font-family: Arial, Helvetica, sans-serif;
 }
 .two_lock {
-  width: 72px; /* 20 px */
-  height: 72px; /* 20 px */
+  width: 68px; /* 20 px */
+  height: 68px; /* 20 px */
   background-color: rgba(255, 210, 20, 0.72);
   border: 2px solid rgba(0, 0, 0, 0.8);
   padding: 15px;
-  font-size: 48px;
+  font-size: 56px;
   text-align: center;
   font-weight: bold;
   color: #E0E0E0;

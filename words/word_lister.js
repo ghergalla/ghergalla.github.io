@@ -291,7 +291,7 @@ function ProcessWordEntered() {
     // resets the word guess:
     valid_guess_word = false;
     $('#guess').css("color", "#B0B0B0");
-    guess.value = "Enter Guess";
+    guess.value = ""; // "Enter Guess";
 
     LockInRowStates();
 

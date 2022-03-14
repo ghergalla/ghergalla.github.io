@@ -242,6 +242,16 @@ function OpenUpRowForClicking(row_index) {
   $('.row' + row_index).data('status', '0')
 }
 
+/* Randomize array in-place using Durstenfeld shuffle algorithm */
+function ShuffleArray(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+
 function ComputeRemainingSolutionWords() {
     console.log("CRS " + current_row_state );
     $('#info-div-2').html('');
@@ -303,6 +313,8 @@ function ProcessWordEntered() {
     ComputeRemainingSolutionWords(); // see if this works
 }
 
+
+
 $(document).ready(function() {
   console.log('ready function');
   $(".grid-container-key" ).hide();
@@ -314,6 +326,7 @@ $(document).ready(function() {
   // Read the Word list
   var solution_word_url = 'solution_words.json';
   $.getJSON(solution_word_url).done(function(data_solutions) {
+    ShuffleArray(data_solutions.solution_words);
     solution_words = data_solutions.solution_words;
     remaining_solution_words = data_solutions.solution_words;
     console.log('Solution words loaded! Words: ' + solution_words.length);

@@ -1,11 +1,441 @@
 <!DOCTYPE html>
-          feedbackEl.innerHTML = `<strong>${fb.message}</strong><div>${problem.explanation}</div>`;
-        }
-        container.appendChild(wrap);
-        if (problem.visual) drawVisual(wrap.querySelector('canvas'), problem.visual);
-      });
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ethan's Math Rehab Studio</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #dbe3ef;
+      --accent: #2563eb;
+      --good: #166534;
+      --good-bg: #dcfce7;
+      --bad: #991b1b;
+      --bad-bg: #fee2e2;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .container { max-width: 1280px; margin: 0 auto; padding: 24px; }
+    .hero, .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+    .hero { padding: 26px; margin-bottom: 22px; }
+    .hero-top, .row-between {
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap;
+    }
+    h1 { margin: 0 0 8px 0; font-size: 2rem; }
+    h2, h3 { margin-top: 0; }
+    .sub { color: var(--muted); line-height: 1.5; max-width: 780px; }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    button, select {
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--text);
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+    }
+    button { cursor: pointer; }
+    .btn-primary { background: var(--accent); color: white; border-color: var(--accent); }
+    .layout { display: grid; grid-template-columns: 1.45fr 0.8fr; gap: 22px; }
+    .left-col, .right-col { display: grid; gap: 18px; align-content: start; }
+    .card { padding: 20px; }
+    .mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stat {
+      background: #f8fafc; border-radius: 18px; padding: 14px; border: 1px solid var(--border);
+    }
+    .stat-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; }
+    .problem {
+      border: 1px solid var(--border); border-radius: 24px; padding: 20px; background: white;
+    }
+    .problem-grid { display: grid; grid-template-columns: 1fr 250px; gap: 16px; align-items: start; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .tag {
+      font-size: 0.78rem; padding: 6px 10px; border-radius: 999px; background: #eef2ff; color: #3730a3; border: 1px solid #c7d2fe;
+    }
+    .tag.diff { background: #f1f5f9; color: #334155; border-color: #dbe3ef; }
+    .prompt { font-size: 1.1rem; font-weight: 600; line-height: 1.45; }
+    .choices { margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .choice { min-height: 54px; text-align: left; white-space: normal; }
+    .choice.correct { border-color: #22c55e; background: #f0fdf4; }
+    .choice.incorrect { border-color: #ef4444; background: #fef2f2; }
+    .feedback { margin-top: 14px; border-radius: 16px; padding: 12px 14px; line-height: 1.45; font-size: 0.95rem; }
+    .feedback.good { background: var(--good-bg); color: var(--good); }
+    .feedback.bad { background: var(--bad-bg); color: var(--bad); }
+    .visual-box {
+      border: 1px solid var(--border); border-radius: 18px; padding: 10px; background: #fff; min-height: 180px; display: flex; align-items: center; justify-content: center;
+    }
+    .progress-track, .tiny-track {
+      width: 100%; background: #e5e7eb; border-radius: 999px; overflow: hidden;
+    }
+    .progress-track { height: 12px; }
+    .tiny-track { height: 8px; }
+    .progress-fill { height: 100%; background: var(--accent); width: 0%; }
+    .tiny-fill { height: 100%; background: #64748b; width: 0%; }
+    .diff-rows, .history-list { display: grid; gap: 10px; margin-top: 12px; }
+    .diff-row { display: grid; grid-template-columns: 44px 1fr 56px; gap: 8px; align-items: center; font-size: 0.92rem; }
+    .history-item { border: 1px solid var(--border); border-radius: 18px; padding: 12px; background: #fff; }
+    .muted { color: var(--muted); }
+    .small { font-size: 0.92rem; }
+    .hidden { display: none; }
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      .problem-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .container { padding: 14px; }
+      .choices { grid-template-columns: 1fr; }
+      h1 { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <div class="hero-top">
+        <div>
+          <h1>Ethan's Math Rehab Studio</h1>
+          <div class="sub">Gentle, adaptive cognitive exercise with lots of wins, varied math styles, and a little fun. This page stores progress in the browser on this device.</div>
+        </div>
+        <div class="btn-row">
+          <button id="exportBankBtn">Export problem bank JSON</button>
+          <button id="exportLogBtn">Export session logs JSON</button>
+          <button id="newBatchTopBtn" class="btn-primary">New batch</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="left-col">
+        <div class="card">
+          <div class="row-between">
+            <div>
+              <h3>Session controls</h3>
+              <div class="muted small">Adaptive mode nudges challenge up or down based on recent performance.</div>
+            </div>
+            <div class="btn-row">
+              <select id="modeSelect">
+                <option value="adaptive">Adaptive</option>
+                <option value="steady">Steady</option>
+              </select>
+              <button id="resetTodayBtn">Reset today</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="problemsContainer"></div>
+
+        <div class="card">
+          <div class="row-between">
+            <div>
+              <div style="font-weight:700; font-size:1.1rem;">Ready for the next 5?</div>
+              <div class="muted small">Current batch accuracy: <span id="batchAccuracy">0%</span></div>
+            </div>
+            <button id="nextBatchBtn" class="btn-primary">Next batch</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-col">
+        <div class="card">
+          <h3>Today's stats</h3>
+          <div class="mini-grid">
+            <div class="stat"><div class="stat-label">Correct</div><div class="stat-value" id="statCorrect">0</div></div>
+            <div class="stat"><div class="stat-label">Attempts</div><div class="stat-value" id="statAttempts">0</div></div>
+            <div class="stat"><div class="stat-label">Accuracy</div><div class="stat-value" id="statAccuracy">0%</div></div>
+            <div class="stat"><div class="stat-label">Avg difficulty</div><div class="stat-value" id="statAvgDifficulty">1.0</div></div>
+          </div>
+          <div style="margin-top:16px;">
+            <div class="row-between small muted"><span>Current adaptive level</span><span id="levelText">3 / 10</span></div>
+            <div class="progress-track" style="margin-top:8px;"><div class="progress-fill" id="levelFill"></div></div>
+          </div>
+          <div style="margin-top:18px;">
+            <div style="font-weight:700; margin-bottom:10px;">Performance by difficulty</div>
+            <div class="diff-rows" id="difficultyRows"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Progress over time</h3>
+          <div class="muted small">Daily summaries stored in this browser.</div>
+          <div class="history-list" id="historyList"></div>
+        </div>
+
+        <div class="card">
+          <h3>Notes</h3>
+          <div class="muted small" style="display:grid; gap:10px; line-height:1.5;">
+            <div>The problem bank includes hundreds of built-in items and can also generate fresh problems on the fly.</div>
+            <div>Data is saved in local storage, so using the same device and browser is best.</div>
+            <div>Later, this can be upgraded to a server-backed version without changing the overall design much.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEYS = {
+      sessionLogs: 'ethan_rehab_session_logs_v1',
+      bank: 'ethan_rehab_problem_bank_v1',
+      activeBatch: 'ethan_rehab_active_batch_v1',
+      activeStats: 'ethan_rehab_active_stats_v1',
+      activeMode: 'ethan_rehab_mode_v1'
+    };
+    const TARGET_BANK_SIZE = 900;
+    const state = { bank: [], batch: [], stats: null, selected: {}, feedback: {}, mode: 'adaptive' };
+
+    function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+    function pick(arr) { return arr[randInt(0, arr.length - 1)]; }
+    function shuffle(arr) {
+      const copy = arr.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = randInt(0, i);
+        const t = copy[i]; copy[i] = copy[j]; copy[j] = t;
+      }
+      return copy;
+    }
+    function uid() { return Math.random().toString(36).slice(2, 11); }
+    function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+    function todayKey() { return new Date().toISOString().slice(0, 10); }
+    function difficultyLabel(d) {
+      if (d <= 2) return 'Gentle';
+      if (d <= 4) return 'Easy';
+      if (d <= 6) return 'Medium';
+      if (d <= 8) return 'Challenging';
+      return 'Stretch';
+    }
+    function formatPct(n) { return Math.round(n * 100) + '%'; }
+    function createChoiceSet(correct, wrongs) {
+      const pool = shuffle([correct].concat(wrongs.filter(w => w !== correct))).slice(0, 4);
+      if (pool.indexOf(correct) === -1) pool[0] = correct;
+      return shuffle(pool);
+    }
+    function makeProblem(obj) {
+      return { id: uid(), type: obj.type, prompt: obj.prompt, choices: createChoiceSet(obj.correctAnswer, obj.wrongAnswers), answer: obj.correctAnswer, difficulty: obj.difficulty, explanation: obj.explanation, visual: obj.visual || null };
     }
 
+    function genAddition(d) {
+      const digits = clamp(Math.ceil(d / 2), 1, 4); const max = Math.pow(10, digits) - 1;
+      const a = randInt(1, max), b = randInt(1, max), answer = a + b;
+      return makeProblem({ type: 'addition', prompt: 'What is ' + a + ' + ' + b + '?', correctAnswer: String(answer), wrongAnswers: [String(answer + randInt(1, 9)), String(answer - randInt(1, 9)), String(answer + randInt(10, 20))], difficulty: d, explanation: 'Add ' + a + ' and ' + b + ' to get ' + answer + '.' });
+    }
+    function genMultiplication(d) {
+      const a = randInt(2, 4 + d * 2), b = randInt(2, 5 + d * 2), answer = a * b;
+      return makeProblem({ type: 'multiplication', prompt: 'What is ' + a + ' × ' + b + '?', correctAnswer: String(answer), wrongAnswers: [String(answer + a), String(answer - b), String(answer + 2)], difficulty: d, explanation: a + ' groups of ' + b + ' equals ' + answer + '.' });
+    }
+    function genDivision(d) {
+      const divisor = randInt(2, 3 + d), quotient = randInt(2, 4 + d * 2), dividend = divisor * quotient;
+      return makeProblem({ type: 'division', prompt: 'What is ' + dividend + ' ÷ ' + divisor + '?', correctAnswer: String(quotient), wrongAnswers: [String(quotient + 1), String(quotient - 1), String(divisor)], difficulty: d, explanation: dividend + ' divided by ' + divisor + ' is ' + quotient + '.' });
+    }
+    function genFraction(d) {
+      const denom = pick([2,3,4,5,6,8,10]); const n1 = randInt(1, denom - 1), n2 = randInt(1, denom - 1);
+      return makeProblem({ type: 'fractions', prompt: 'Add the fractions: ' + n1 + '/' + denom + ' + ' + n2 + '/' + denom, correctAnswer: (n1 + n2) + '/' + denom, wrongAnswers: [Math.abs(n1 - n2) + '/' + denom, (n1 + n2) + '/' + (denom + 1), (n1 + n2 + 1) + '/' + denom], difficulty: d, explanation: 'Same denominator, so add the numerators.' });
+    }
+    function genLinear(d) {
+      const x = randInt(-5, 12), a = randInt(1, 3 + d), b = randInt(-10, 10), c = a * x + b;
+      return makeProblem({ type: 'algebra', prompt: 'Solve for x: ' + a + 'x ' + (b >= 0 ? '+' : '-') + ' ' + Math.abs(b) + ' = ' + c, correctAnswer: String(x), wrongAnswers: [String(x + 1), String(x - 1), String(c - b)], difficulty: d, explanation: 'Subtract ' + b + ' and divide by ' + a + '.' });
+    }
+    function genTwoStep(d) {
+      const x = randInt(1, 12), a = randInt(2, 5 + Math.floor(d / 2)), b = randInt(1, 12), c = a * (x + b);
+      return makeProblem({ type: 'algebra', prompt: 'Solve for x: ' + a + '(x + ' + b + ') = ' + c, correctAnswer: String(x), wrongAnswers: [String(x + b), String(c / a), String(x - 1)], difficulty: d, explanation: 'First divide by ' + a + ', then subtract ' + b + '.' });
+    }
+    function genSequence(d) {
+      const start = randInt(1, 10), step = randInt(2, 3 + d); const seq = [start, start + step, start + 2*step, start + 3*step];
+      return makeProblem({ type: 'patterns', prompt: 'What number comes next? ' + seq.join(', ') + ', ...', correctAnswer: String(start + 4 * step), wrongAnswers: [String(start + 4 * step + 1), String(start + 3 * step), String(start + 5 * step)], difficulty: d, explanation: 'The pattern adds ' + step + ' each time.' });
+    }
+    function genPercent(d) {
+      const pct = pick([10,20,25,50,75]); const base = randInt(4, 20) * (d <= 5 ? 2 : 4); const answer = pct / 100 * base;
+      return makeProblem({ type: 'percent', prompt: 'What is ' + pct + '% of ' + base + '?', correctAnswer: String(answer), wrongAnswers: [String(answer + base / 10), String(base - answer), String(answer / 2)], difficulty: d, explanation: pct + '% means ' + pct + '/100.' });
+    }
+    function genCoordinateDistance(d) {
+      const x1 = randInt(-5, 5), y1 = randInt(-5, 5), dx = pick([0,3,4,5]), dy = dx === 0 ? randInt(2,6) : 0, x2 = x1 + dx, y2 = y1 + dy;
+      return makeProblem({ type: 'geometry', prompt: 'What is the distance between A(' + x1 + ', ' + y1 + ') and B(' + x2 + ', ' + y2 + ')?', correctAnswer: String(Math.abs(dx) + Math.abs(dy)), wrongAnswers: [String(Math.abs(dx) + Math.abs(dy) + 1), String(Math.abs(dx) + Math.abs(dy) + 2), String(Math.max(Math.abs(dx), Math.abs(dy)))], difficulty: d, explanation: 'These points are horizontal or vertical, so just count the units.', visual: { kind: 'segment', x1: x1, y1: y1, x2: x2, y2: y2 } });
+    }
+    function genRectangleArea(d) {
+      const w = randInt(2, 4 + d), h = randInt(2, 4 + d), answer = w * h;
+      return makeProblem({ type: 'geometry', prompt: 'What is the area of this rectangle?', correctAnswer: String(answer), wrongAnswers: [String(2 * (w + h)), String(answer + w), String(answer - h)], difficulty: d, explanation: 'Area = width × height = ' + w + ' × ' + h + ' = ' + answer + '.', visual: { kind: 'rectangle', w: w, h: h } });
+    }
+    function genTrianglePerimeter(d) {
+      const a = randInt(3, 5 + d), b = randInt(3, 5 + d), c = randInt(3, 5 + d), answer = a + b + c;
+      return makeProblem({ type: 'geometry', prompt: 'What is the perimeter of this triangle?', correctAnswer: String(answer), wrongAnswers: [String(answer - 1), String(answer + 2), String(a * b * c)], difficulty: d, explanation: 'Perimeter means add all side lengths.', visual: { kind: 'triangle', a: a, b: b, c: c } });
+    }
+    function genAngle(d) {
+      const angle = pick([30,45,60,70,80,90,100,110]);
+      return makeProblem({ type: 'geometry', prompt: 'These two angles form a straight line. If one is ' + angle + '°, what is the other?', correctAnswer: String(180 - angle) + '°', wrongAnswers: [String(angle) + '°', String(190 - angle) + '°', String(360 - angle) + '°'], difficulty: d, explanation: 'Angles on a straight line add to 180°.', visual: { kind: 'angle', angle: angle } });
+    }
+    function genWordProblem(d) {
+      const apples = randInt(3, 8 + d), bought = randInt(2, 6 + d);
+      return makeProblem({ type: 'word', prompt: 'Ethan has ' + apples + ' apples and buys ' + bought + ' more. How many apples does he have now?', correctAnswer: String(apples + bought), wrongAnswers: [String(apples + bought - 1), String(apples * bought), String(Math.abs(bought - apples))], difficulty: d, explanation: 'This is an addition story problem.' });
+    }
+    function genLogic(d) {
+      const riddles = [
+        { prompt: 'I am an odd number. Take away one letter and I become even. What number am I?', answer: 'Seven', wrong: ['Five','Eleven','Nine'], explanation: "Remove the s from seven and you get even." },
+        { prompt: 'A farmer has 3 cats, 2 dogs, and 4 ducks. How many animal legs are there in all?', answer: '30', wrong: ['26','28','32'], explanation: '3×4 + 2×4 + 4×2 = 30.' },
+        { prompt: 'Which is heavier: a pound of feathers or a pound of rocks?', answer: 'They weigh the same', wrong: ['Feathers','Rocks','Depends on the bag'], explanation: 'A pound is a pound.' }
+      ];
+      const r = pick(riddles); return makeProblem({ type: 'logic', prompt: r.prompt, correctAnswer: r.answer, wrongAnswers: r.wrong, difficulty: d, explanation: r.explanation });
+    }
+    function genQuadraticEval(d) {
+      const x = randInt(-3,5), a = pick([1,1,2]), b = randInt(-4,4), c = randInt(-5,5), answer = a*x*x + b*x + c;
+      let expr = (a === 1 ? '' : a) + 'x²'; if (b !== 0) expr += ' ' + (b >= 0 ? '+' : '-') + ' ' + Math.abs(b) + 'x'; if (c !== 0) expr += ' ' + (c >= 0 ? '+' : '-') + ' ' + Math.abs(c);
+      return makeProblem({ type: 'algebra', prompt: 'Evaluate ' + expr + ' when x = ' + x + '.', correctAnswer: String(answer), wrongAnswers: [String(answer + 1), String(answer - 2), String(a*x*x + b + c)], difficulty: d, explanation: 'Substitute x = ' + x + ' and simplify carefully.' });
+    }
+    function genMean(d) {
+      const nums = Array.from({ length: 4 }, function(){ return randInt(2, 8 + d); }); const sum = nums.reduce((a,b) => a+b, 0);
+      return makeProblem({ type: 'data', prompt: 'What is the mean of ' + nums.join(', ') + '?', correctAnswer: String(sum / nums.length), wrongAnswers: [String(sum), String(Math.round(sum / nums.length)), String(nums[0])], difficulty: d, explanation: 'Add the numbers and divide by 4.' });
+    }
+    function genProblemByType(type, d) {
+      const map = { addition: genAddition, multiplication: genMultiplication, division: genDivision, fractions: genFraction, algebra: Math.random() < 0.5 ? genLinear : genTwoStep, patterns: genSequence, percent: genPercent, geometry_area: genRectangleArea, geometry_perimeter: genTrianglePerimeter, geometry_angle: genAngle, geometry_distance: genCoordinateDistance, word: genWordProblem, logic: genLogic, quadratic: genQuadraticEval, data: genMean };
+      return map[type](d);
+    }
+    function generateProblemBank(size) {
+      const typePool = ['addition','multiplication','division','fractions','algebra','patterns','percent','geometry_area','geometry_perimeter','geometry_angle','geometry_distance','word','logic','quadratic','data'];
+      const bank = [];
+      for (let i = 0; i < size; i++) bank.push(genProblemByType(typePool[i % typePool.length], (i % 10) + 1));
+      return shuffle(bank);
+    }
+    function getOrCreateBank() {
+      const existing = localStorage.getItem(STORAGE_KEYS.bank); if (existing) return JSON.parse(existing);
+      const bank = generateProblemBank(TARGET_BANK_SIZE); localStorage.setItem(STORAGE_KEYS.bank, JSON.stringify(bank)); return bank;
+    }
+    function downloadJSON(filename, data) {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url);
+    }
+    function buildBatch(bank, level) {
+      const spread = [level - 1, level, level, level + 1, Math.max(1, level - 2)].map(n => clamp(n, 1, 10));
+      return spread.map(function(d, idx){
+        const exact = bank.filter(p => p.difficulty === d);
+        if (exact.length) { const base = pick(exact); return Object.assign({}, base, { id: base.id + '_' + idx + '_' + uid() }); }
+        return genProblemByType(pick(['addition','multiplication','fractions','algebra','geometry_area','word','logic']), d);
+      });
+    }
+    function makeFreshProblem(difficulty) {
+      const type = pick(['addition','multiplication','division','fractions','algebra','patterns','percent','geometry_area','geometry_perimeter','geometry_angle','geometry_distance','word','logic','quadratic','data']);
+      return genProblemByType(type, clamp(difficulty, 1, 10));
+    }
+    function getInitialStats() {
+      return { date: todayKey(), totalAnswered: 0, correct: 0, attempts: 0, averageDifficultySeen: 1, streak: 0, currentLevel: 3, byDifficulty: {}, answeredProblems: [] };
+    }
+    function getSessionLogs() { return JSON.parse(localStorage.getItem(STORAGE_KEYS.sessionLogs) || '[]'); }
+    function mergeSessionLog(stats) {
+      const existing = getSessionLogs();
+      const summarized = { date: stats.date, totalAnswered: stats.totalAnswered, correct: stats.correct, attempts: stats.attempts, accuracy: stats.attempts ? stats.correct / stats.attempts : 0, averageDifficultySeen: Number(stats.averageDifficultySeen.toFixed(2)), currentLevel: stats.currentLevel, byDifficulty: stats.byDifficulty };
+      const filtered = existing.filter(d => d.date !== stats.date); const next = filtered.concat([summarized]).sort((a,b) => a.date.localeCompare(b.date));
+      localStorage.setItem(STORAGE_KEYS.sessionLogs, JSON.stringify(next)); return next;
+    }
+    function saveState() {
+      localStorage.setItem(STORAGE_KEYS.activeBatch, JSON.stringify(state.batch));
+      localStorage.setItem(STORAGE_KEYS.activeStats, JSON.stringify(state.stats));
+      localStorage.setItem(STORAGE_KEYS.activeMode, state.mode);
+      mergeSessionLog(state.stats);
+    }
+    function loadState() {
+      state.bank = getOrCreateBank();
+      const storedStats = localStorage.getItem(STORAGE_KEYS.activeStats); const parsedStats = storedStats ? JSON.parse(storedStats) : getInitialStats();
+      state.stats = parsedStats.date === todayKey() ? parsedStats : getInitialStats();
+      state.mode = localStorage.getItem(STORAGE_KEYS.activeMode) || 'adaptive';
+      const storedBatch = localStorage.getItem(STORAGE_KEYS.activeBatch);
+      state.batch = storedBatch ? JSON.parse(storedBatch) : buildBatch(state.bank, state.stats.currentLevel);
+      state.selected = {}; state.feedback = {};
+    }
+    function getBatchAccuracy() {
+      const scored = state.batch.filter(p => state.feedback[p.id]); if (!scored.length) return 0;
+      return scored.filter(p => state.feedback[p.id].correct).length / scored.length;
+    }
+    function handleAnswer(problemId, choice) {
+      if (state.feedback[problemId]) return;
+      const problem = state.batch.find(p => p.id === problemId); if (!problem) return;
+      const correct = choice === problem.answer; const key = String(problem.difficulty); const byDifficulty = Object.assign({}, state.stats.byDifficulty);
+      byDifficulty[key] = byDifficulty[key] || { attempts: 0, correct: 0 }; byDifficulty[key].attempts += 1; if (correct) byDifficulty[key].correct += 1;
+      const totalAnswered = state.stats.totalAnswered + 1; const totalDifficulty = state.stats.averageDifficultySeen * state.stats.totalAnswered + problem.difficulty;
+      state.stats = Object.assign({}, state.stats, { totalAnswered: totalAnswered, correct: state.stats.correct + (correct ? 1 : 0), attempts: state.stats.attempts + 1, averageDifficultySeen: totalDifficulty / totalAnswered, streak: correct ? state.stats.streak + 1 : 0, byDifficulty: byDifficulty, answeredProblems: state.stats.answeredProblems.concat([{ id: problem.id, difficulty: problem.difficulty, correct: correct }]) });
+      state.selected[problemId] = choice; state.feedback[problemId] = { correct: correct, message: correct ? 'Nice work.' : 'Correct answer: ' + problem.answer };
+      saveState(); render();
+    }
+    function nextBatch() {
+      const batchAccuracy = getBatchAccuracy(); let nextLevel = state.stats.currentLevel;
+      if (state.mode === 'adaptive') { if (batchAccuracy >= 0.8) nextLevel += 1; else if (batchAccuracy <= 0.4) nextLevel -= 1; }
+      nextLevel = clamp(nextLevel, 1, 10); state.stats.currentLevel = nextLevel;
+      const useFresh = Math.random() < 0.35;
+      state.batch = useFresh ? [0,1,2,3,4].map(i => makeFreshProblem(clamp(nextLevel + (i % 3) - 1, 1, 10))) : buildBatch(state.bank, nextLevel);
+      state.selected = {}; state.feedback = {}; saveState(); render();
+    }
+    function resetToday() {
+      state.stats = getInitialStats(); state.batch = buildBatch(state.bank, state.stats.currentLevel); state.selected = {}; state.feedback = {}; saveState(); render();
+    }
+    function drawVisual(canvas, visual) {
+      if (!canvas || !visual) return; const ctx = canvas.getContext('2d'); ctx.clearRect(0,0,canvas.width,canvas.height); ctx.lineWidth = 2; ctx.font = '14px sans-serif'; ctx.strokeStyle = '#111827'; ctx.fillStyle = '#111827';
+      if (visual.kind === 'rectangle') {
+        const scale = 18, x = 40, y = 35, w = visual.w * scale, h = visual.h * scale; ctx.strokeRect(x, y, w, h); ctx.fillText(String(visual.w), x + w/2 - 5, y - 8); ctx.fillText(String(visual.h), x + w + 8, y + h/2);
+      }
+      if (visual.kind === 'triangle') {
+        const p1 = { x: 55, y: 120 }, p2 = { x: 180, y: 120 }, p3 = { x: 120, y: 40 }; ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y); ctx.lineTo(p3.x,p3.y); ctx.closePath(); ctx.stroke(); ctx.fillText(String(visual.a), 110, 134); ctx.fillText(String(visual.b), 77, 78); ctx.fillText(String(visual.c), 156, 78);
+      }
+      if (visual.kind === 'angle') {
+        const cx = 60, cy = 100, r = 70; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+r,cy); ctx.moveTo(cx,cy); const rad = (-visual.angle * Math.PI) / 180; ctx.lineTo(cx + Math.cos(rad) * r, cy + Math.sin(rad) * r); ctx.stroke(); ctx.beginPath(); ctx.arc(cx, cy, 30, rad, 0); ctx.stroke(); ctx.fillText(visual.angle + '°', 76, 78);
+      }
+      if (visual.kind === 'segment') {
+        const originX = 120, originY = 80, scale = 15;
+        for (let i = -6; i <= 6; i++) {
+          ctx.beginPath(); ctx.strokeStyle = i === 0 ? '#475569' : '#d1d5db'; ctx.moveTo(originX + i*scale, 20); ctx.lineTo(originX + i*scale, 140); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(30, originY + i*scale); ctx.lineTo(210, originY + i*scale); ctx.stroke();
+        }
+        const ax = originX + visual.x1 * scale, ay = originY - visual.y1 * scale, bx = originX + visual.x2 * scale, by = originY - visual.y2 * scale;
+        ctx.strokeStyle = '#111827'; ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke(); ctx.beginPath(); ctx.arc(ax, ay, 4, 0, Math.PI * 2); ctx.arc(bx, by, 4, 0, Math.PI * 2); ctx.fill(); ctx.fillText('A', ax + 6, ay - 6); ctx.fillText('B', bx + 6, by - 6);
+      }
+    }
+    function renderProblems() {
+      const container = document.getElementById('problemsContainer'); container.innerHTML = '';
+      state.batch.forEach(function(problem, idx){
+        const fb = state.feedback[problem.id];
+        const wrap = document.createElement('div'); wrap.className = 'problem';
+        const grid = document.createElement('div'); grid.className = 'problem-grid';
+        const left = document.createElement('div');
+        const tags = document.createElement('div'); tags.className = 'tags';
+        const tag1 = document.createElement('div'); tag1.className = 'tag'; tag1.textContent = problem.type;
+        const tag2 = document.createElement('div'); tag2.className = 'tag diff'; tag2.textContent = 'Difficulty ' + problem.difficulty + ' · ' + difficultyLabel(problem.difficulty);
+        tags.appendChild(tag1); tags.appendChild(tag2);
+        const prompt = document.createElement('div'); prompt.className = 'prompt'; prompt.textContent = (idx + 1) + '. ' + problem.prompt;
+        const choices = document.createElement('div'); choices.className = 'choices';
+        problem.choices.forEach(function(choice){
+          const btn = document.createElement('button'); btn.className = 'choice'; btn.textContent = choice;
+          const chosen = state.selected[problem.id] === choice; const isCorrect = choice === problem.answer;
+          if (fb && isCorrect) btn.classList.add('correct');
+          if (fb && chosen && !isCorrect) btn.classList.add('incorrect');
+          btn.disabled = !!fb; btn.addEventListener('click', function(){ handleAnswer(problem.id, choice); }); choices.appendChild(btn);
+        });
+        left.appendChild(tags); left.appendChild(prompt); left.appendChild(choices);
+        if (fb) {
+          const feedback = document.createElement('div'); feedback.className = 'feedback ' + (fb.correct ? 'good' : 'bad');
+          const strong = document.createElement('strong'); strong.textContent = fb.message;
+          const expl = document.createElement('div'); expl.textContent = problem.explanation;
+          feedback.appendChild(strong); feedback.appendChild(expl); left.appendChild(feedback);
+        }
+        grid.appendChild(left);
+        if (problem.visual) {
+          const right = document.createElement('div'); right.className = 'visual-box';
+          const canvas = document.createElement('canvas'); canvas.width = 240; canvas.height = 160; right.appendChild(canvas); grid.appendChild(right);
+          wrap.appendChild(grid); container.appendChild(wrap); drawVisual(canvas, problem.visual);
+        } else {
+          wrap.appendChild(grid); container.appendChild(wrap);
+        }
+      });
+    }
     function renderStats() {
       document.getElementById('statCorrect').textContent = state.stats.correct;
       document.getElementById('statAttempts').textContent = state.stats.attempts;
@@ -15,70 +445,50 @@
       document.getElementById('levelFill').style.width = (state.stats.currentLevel * 10) + '%';
       document.getElementById('batchAccuracy').textContent = formatPct(getBatchAccuracy());
       document.getElementById('modeSelect').value = state.mode;
-
-      const rows = document.getElementById('difficultyRows');
-      rows.innerHTML = '';
+      const rows = document.getElementById('difficultyRows'); rows.innerHTML = '';
       for (let d = 1; d <= 10; d++) {
-        const row = state.stats.byDifficulty[String(d)] || { attempts: 0, correct: 0 };
-        const acc = row.attempts ? row.correct / row.attempts : 0;
-        const item = document.createElement('div');
-        item.className = 'diff-row';
-        item.innerHTML = `
-          <div class="muted">D${d}</div>
-          <div class="tiny-track"><div class="tiny-fill" style="width:${acc * 100}%"></div></div>
-          <div class="muted" style="text-align:right;">${row.correct}/${row.attempts}</div>
-        `;
-        rows.appendChild(item);
+        const row = state.stats.byDifficulty[String(d)] || { attempts: 0, correct: 0 }; const acc = row.attempts ? row.correct / row.attempts : 0;
+        const item = document.createElement('div'); item.className = 'diff-row';
+        const label = document.createElement('div'); label.className = 'muted'; label.textContent = 'D' + d;
+        const track = document.createElement('div'); track.className = 'tiny-track';
+        const fill = document.createElement('div'); fill.className = 'tiny-fill'; fill.style.width = (acc * 100) + '%'; track.appendChild(fill);
+        const val = document.createElement('div'); val.className = 'muted'; val.style.textAlign = 'right'; val.textContent = row.correct + '/' + row.attempts;
+        item.appendChild(label); item.appendChild(track); item.appendChild(val); rows.appendChild(item);
       }
     }
-
     function renderHistory() {
-      const list = document.getElementById('historyList');
-      list.innerHTML = '';
+      const list = document.getElementById('historyList'); list.innerHTML = '';
       const logs = getSessionLogs().slice(-7).reverse();
       if (!logs.length) {
-        list.innerHTML = '<div class="muted small">As Ethan works, daily results will appear here.</div>';
-        return;
+        const empty = document.createElement('div'); empty.className = 'muted small'; empty.textContent = 'As Ethan works, daily results will appear here.'; list.appendChild(empty); return;
       }
-      logs.forEach(row => {
-        const item = document.createElement('div');
-        item.className = 'history-item';
-        item.innerHTML = `
-          <div class="row-between">
-            <div style="font-weight:700;">${row.date}</div>
-            <div class="tag diff">Level ${row.currentLevel}</div>
-          </div>
-          <div class="small muted" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:8px;">
-            <div>Answered: ${row.totalAnswered}</div>
-            <div>Accuracy: ${formatPct(row.accuracy || 0)}</div>
-            <div>Avg diff: ${row.averageDifficultySeen}</div>
-          </div>
-        `;
-        list.appendChild(item);
+      logs.forEach(function(row){
+        const item = document.createElement('div'); item.className = 'history-item';
+        const top = document.createElement('div'); top.className = 'row-between';
+        const date = document.createElement('div'); date.style.fontWeight = '700'; date.textContent = row.date;
+        const badge = document.createElement('div'); badge.className = 'tag diff'; badge.textContent = 'Level ' + row.currentLevel;
+        top.appendChild(date); top.appendChild(badge);
+        const details = document.createElement('div'); details.className = 'small muted'; details.style.display = 'grid'; details.style.gridTemplateColumns = '1fr 1fr 1fr'; details.style.gap = '8px'; details.style.marginTop = '8px';
+        const a = document.createElement('div'); a.textContent = 'Answered: ' + row.totalAnswered;
+        const b = document.createElement('div'); b.textContent = 'Accuracy: ' + formatPct(row.accuracy || 0);
+        const c = document.createElement('div'); c.textContent = 'Avg diff: ' + row.averageDifficultySeen;
+        details.appendChild(a); details.appendChild(b); details.appendChild(c);
+        item.appendChild(top); item.appendChild(details); list.appendChild(item);
       });
     }
-
     function render() {
-      renderProblems();
-      renderStats();
-      renderHistory();
+      renderProblems(); renderStats(); renderHistory();
       document.getElementById('nextBatchBtn').disabled = !state.batch.length || !state.batch.every(p => state.feedback[p.id]);
     }
 
-    document.getElementById('exportBankBtn').addEventListener('click', () => downloadJSON('ethan_problem_bank.json', state.bank));
-    document.getElementById('exportLogBtn').addEventListener('click', () => downloadJSON('ethan_session_logs.json', getSessionLogs()));
+    document.getElementById('exportBankBtn').addEventListener('click', function(){ downloadJSON('ethan_problem_bank.json', state.bank); });
+    document.getElementById('exportLogBtn').addEventListener('click', function(){ downloadJSON('ethan_session_logs.json', getSessionLogs()); });
     document.getElementById('newBatchTopBtn').addEventListener('click', nextBatch);
     document.getElementById('nextBatchBtn').addEventListener('click', nextBatch);
     document.getElementById('resetTodayBtn').addEventListener('click', resetToday);
-    document.getElementById('modeSelect').addEventListener('change', (e) => {
-      state.mode = e.target.value;
-      saveState();
-      render();
-    });
+    document.getElementById('modeSelect').addEventListener('change', function(e){ state.mode = e.target.value; saveState(); render(); });
 
-    loadState();
-    saveState();
-    render();
+    loadState(); saveState(); render();
   </script>
 </body>
 </html>
